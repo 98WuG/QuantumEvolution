@@ -161,9 +161,9 @@
 			\node[fill=blue!25, text width=3cm, align=center] (Initial) {Initialize State\\+\\Lattice};
 			\node(Evolution)[fill=green!25, text width=3cm, align=center, right=of Initial]{Evolution Code};
 			\node(Analysis)[fill=red!25, text width=3cm, align=center, right=of Evolution]{Analysis + Display a History};
-			\node(Translate)[below = of Initial, text width=3cm, align=center]{Translate an initial state specified by a formula $\psi_0(x)$ into a lattice representation.\\Prepare to evolve.};
+			\node(Translate)[below = of Initial, text width=3cm, align=center]{Translate an initial state \textbf{specified by a formula} $\psi_0(x)$ into a lattice representation.\\Prepare to evolve.};
 			\node(Evolve)[right = of Translate, text width=3cm, align=center]{\textbf{Evolve} and \textbf{record} a history of the lattice state and prepare information.\\Should produce an output file.};
-			\node(Look)[right = of Evolve, text width=3cm, align=center]{Look at the lattice state-graphs and other quantities. Works on output files};
+			\node(Look)[right = of Evolve, text width=3cm, align=center]{Look at the lattice state-graphs and other quantities. Works on output files.};
 			\draw[-{>[scale=2.5,length=2,width=3]},line width=0.4pt] (Initial) to (Evolution);
 			\draw[-{>[scale=2.5,length=2,width=3]},line width=0.4pt] (Evolution) to (Analysis);
 			\draw[-{>[scale=2.5,length=2,width=3]},line width=0.4pt] (Translate) to (Initial);
