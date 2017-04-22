@@ -10,29 +10,31 @@
 \begin{document}
 	\setlength{\parindent}{0pt}
 	\setlength{\parskip}{1em}
-	\title{Computing the Discretised Schrodinger Equation}
+	\title{Computing the Discretised Schr{\"o}dinger Equation}
 	\author{xd}
 	\maketitle
 	\pagenumbering{arabic}
 
 	\section{Math}
 	\subsection{Discretising}
-	Start off with the Schrodinger Equation in one-dimension:
+	Start off with the Schr{\"o}dinger Equation in one-dimension:
 	\begin{align*}
 		i \hbar \frac{\partial}{\partial t} \psi &= \Big[-\frac{\hbar}{2m}\frac{\partial^2}{\partial x^2} + V(x)\Big] \psi \\
 	\end{align*}
 	Define the complex wave function $\psi$ in terms of its real and imaginary parts:
-	\begin{align*}
-		\psi(x,t) = a(x,t)+ib(x,t) &=  
+		\[\psi(x,t) = a(x,t)+ib(x,t)\]
+		\[\psi =
 		\begin{pmatrix}
 			a(x,t) \\
 			b(x,t)
-		\end{pmatrix}
-		\Rightarrow i\psi = 
+		\end{pmatrix},
+		i\psi = 
 		\begin{pmatrix}
 			-b(x,t)\\
 			a(x,t)
-		\end{pmatrix}\\
+		\end{pmatrix}\]
+	Substituting this back into the Schr{\"o}dinger Equation, we see:
+	\begin{align*}
 		\frac{\partial}{\partial t} 
 		\begin{pmatrix}
 			-b(x,t)\\
@@ -59,7 +61,7 @@
 		b(x_i,t) &= b_i(t)\\
 		V(x_i) &= V_i
 	\end{align*}
-	Using the second derivative approximation discussed in class:
+	Recall the second derivative approximation discussed in class:
 	\begin{align*}
 		\Big( \frac{\partial^2 a}{\partial x^2} \Big) x_i &\approx \frac{a_{i+1}+a_{i-1}-2a_i}{{(\delta x)}^2}\\
 		\Big( \frac{\partial^2 b}{\partial x^2} \Big) x_i &\approx \frac{b_{i+1}+b_{i-1}-2b_i}{{(\delta x)}^2}
