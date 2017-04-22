@@ -6,6 +6,11 @@
 \usepackage{siunitx}
 \usepackage{enumitem}
 \usepackage{calc}
+\usepackage{tikz}
+\usepackage{verbatim}
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows.meta}
 
 \renewcommand\arraystretch{1.5}
 
@@ -13,7 +18,7 @@
 	\setlength{\parindent}{0pt}
 	\setlength{\parskip}{1em}
 	\title{Computing the Discretised Schr{\"o}dinger Equation}
-	\author{xd}
+	\author{Dr.\ D-Money}
 	\maketitle
 	\pagenumbering{arabic}
 
@@ -141,7 +146,7 @@
 	If we choose $\Delta \tau \approx \frac{1}{m}$ ($m$ some integer $> 0$) we will need between $n \cdot m$ and \textbf{$2nm$ total time steps at a minimum} to see instructions that propogate across the total lattice.\\
 	This means we prepare for 20,000 time steps on a 1000 point lattice (at the minimum) and probably more like 50,000 to 100,000.\par
 	This means that if we want to see real results in a real time $T$, a single evolution time step must run in a time less than $10^{-5} T$. (e.g. If $T=10\si{\second}$ then a single evolution time step must run in $10^{-3}\si{\second}$)\par
-	This gives you a rule of thumb about the time your code can take to do an evolution time step for data on the lattice. Clearly, to be fast you need to get single time step evolution execution time under a millisecond. Since this scales with the lattice size, you will probably want to debug a lot of code on lattices with smaller number of points (like 200 - 500).
+	This gives you a rule of thumb about the time your code can take to do an evolution time step for data on the lattice. Clearly, to be fast you need to get single time step evolution execution time under a millisecond. Since this scales with the lattice size, you will probably want to debug a lot of code on lattices with smaller number of points (like 200 to 500).
 	\subsection{Boundary conditions}
 	Boundary conditions: $a_0=b_0=a_n=b_n=0$\par
 	Hold these values fixed for ``box'' boundary conditions. These values are not \textbf{evolved} during the program run.
@@ -150,4 +155,20 @@
 		\item[So far] We have translated a \textbf{partial differential equation} into a very large number of \textbf{ordinary differential equations} that are coupled together.
 		\item[Next] We turn to the problem of approximating the time evolution in continuous time into an approximate series of time step evolutions. You will want to encapsulate the time evolution step in a single function or routine. I will suggest a baseline approach; however, there is room to upgrade or try out different evolution time step algorithms. Encapsulating this part of the program will facilitate experimentation.
 	\end{description}
+	\section{General Structure of Your Code}
+	\begin{center}
+		\begin{tikzpicture}
+			\node[fill=blue!25, text width=3cm, align=center] (Initial) {Initialize State\\+\\Lattice};
+			\node(Evolution)[fill=green!25, text width=3cm, align=center, right=of Initial]{Evolution Code};
+			\node(Analysis)[fill=red!25, text width=3cm, align=center, right=of Evolution]{Analysis + Display a History};
+			\node(Translate)[below = of Initial, text width=3cm, align=center]{Translate an initial state specified by a formula $\psi_0(x)$ into a lattice representation.\\Prepare to evolve.};
+			\node(Evolve)[right = of Translate, text width=3cm, align=center]{\textbf{Evolve} and \textbf{record} a history of the lattice state and prepare information.\\Should produce an output file.};
+			\node(Look)[right = of Evolve, text width=3cm, align=center]{Look at the lattice state-graphs and other quantities. Works on output files};
+			\draw[-{>[scale=2.5,length=2,width=3]},line width=0.4pt] (Initial) to (Evolution);
+			\draw[-{>[scale=2.5,length=2,width=3]},line width=0.4pt] (Evolution) to (Analysis);
+			\draw[-{>[scale=2.5,length=2,width=3]},line width=0.4pt] (Translate) to (Initial);
+			\draw[-{>[scale=2.5,length=2,width=3]},line width=0.4pt] (Evolve) to (Evolution);
+			\draw[-{>[scale=2.5,length=2,width=3]},line width=0.4pt] (Look) to (Analysis);
+		\end{tikzpicture}
+	\end{center}
 \end{document}
