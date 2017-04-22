@@ -136,7 +136,7 @@
 	\subsection{Necessary resources/steps}
 	\begin{description}[leftmargin=6em,style=nextline]
 		\item[Next] Build an evolution scheme (algorithm) through \textbf{small} $(\delta \tau \ll 1)$ dimensionless time steps.
-		\item[Tradeoff] We want to do evolutions through enough time steps to see disturbances in the wave function propogate across the entire length of the lattice. This means that if we step forward in time by $\delta \tau \approx 1$, we will need total time $N\delta t$, $N \approx \frac{L\delta t}{\delta x / \delta t} = \frac{L}{\delta x} = n$\par
+		\item[Tradeoff] We want to do evolutions through enough time steps to see disturbances in the wave function propogate across the entire length of the lattice. This means that if we step forward in time by $\delta \tau \approx 1$, we will need total time $N\delta t$, $N \approx \frac{L/\delta t}{\delta x / \delta t} = \frac{L}{\delta x} = n$\par.
 	\end{description}
 	If we choose $\Delta \tau \approx \frac{1}{m}$ ($m$ some integer $> 0$) we will need between $n \cdot m$ and \textbf{$2nm$ total time steps at a minimum} to see instructions that propogate across the total lattice.\\
 	This means we prepare for 20,000 time steps on a 1000 point lattice (at the minimum) and probably more like 50,000 to 100,000.\par
