@@ -1,0 +1,53 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{parskip}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{calc}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{verbatim}
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows.meta}
+
+%\renewcommand\arraystretch{1.5}
+
+\begin{document}
+	\setlength{\parindent}{0pt}
+	\setlength{\parskip}{1em}
+	\title{Computing the Discretised Schr{\"o}dinger Equation Part 2}
+	\author{Dr.\ D-Money}
+	\maketitle
+	\pagenumbering{arabic}
+
+	\section{Derivative approximations}
+	\subsection{Some preliminaries}
+	Let us define the vector $\vec{S_i} = \begin{pmatrix} a_i \\ b_i \end{pmatrix}$\\
+	Therefore the overall matrix of points $S$ will be:\\
+	\[S=\begin{pmatrix}
+		a_0 & \hdots & a_n\\
+		b_0 & \hdots & b_n
+	\end{pmatrix}\]
+	Define: $\vec{F}(\vec{S})=\frac{\partial \vec{S}}{\partial \tau}$\\
+	We can see that:\\
+	\[\frac{\partial}{\partial t}
+	\begin{pmatrix}
+		a_i \\
+		b_i
+	\end{pmatrix}
+	\approx
+	\underbrace{\begin{pmatrix}
+		b_i-(b_{i+1}+b_{i-1})\\
+		a_{i+1}+a_{i-1}-a_i
+	\end{pmatrix}}_{\vec{F}}
+	\]
+	This is all the definitions we need for the derivative approximations.
+	\subsection{Method 1: 2nd Order Approximation}
+	This method produces errors on the order of $\mathcal{O}(d\tau^3)$\\
+	We begin by starting with an initial point on the line, $\vec{S}_0$. We must first approximate a half step by the following method:
+
+
+\end{document}
