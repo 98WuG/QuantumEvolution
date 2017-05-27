@@ -1,6 +1,6 @@
 int numIndex=500;
 double interval=0.5;
-double timestep=0.1;
+double timestep=0.05;
 double latSpace;
 double dx;
 State[] states = new State[numIndex];
@@ -8,7 +8,7 @@ int counter;
 
 void setup()
 {
-	size(1500, 900);
+	size(2000, 1500);
 	latSpace = (double) width / (double) numIndex;
 	dx = (double) interval / (double) numIndex;
 	for(int i=0; i < numIndex; i++)
@@ -16,35 +16,41 @@ void setup()
 		double x = findCoordinate(i);
 		double a1 = 0.01;
 		double totalAmplitude = (double) 1 / Math.sqrt(Math.sqrt(Math.PI) * a1) * Math.exp(0 - Math.pow(x,2) / (2 * Math.pow(a1,2)));
-		
+
 		double a = totalAmplitude * Math.cos((x-1000)*1000);
 		double b = totalAmplitude * Math.sin((x-1000)*1000);
+
 		/*
 		double a = totalAmplitude * 1;
 		double b = totalAmplitude * 0;
 		*/
-		//println("a: " + a);
+
 		states[i] = new State(a,b);
 	}
 	counter=0;
-	frameRate(6000);
+	frameRate(1000);
 }
 
 void draw()
 {
 	background(0);
-	timeEvolve();
 	double prob=0;
 	for(State current : states)
 	{
 		prob += Math.pow(current.getA(),2) + Math.pow(current.getB(),2);
 	}
 	prob = prob / (double) numIndex * (double) interval;
+	for(State current : states)
+	{
+		current.setA(current.getA() / Math.sqrt(prob));
+		current.setB(current.getB() / Math.sqrt(prob));
+	}
+	timeEvolve();
 	counter++;
 	textSize(30);
 	fill(255);
-	text("Timestep " + counter + "\nTotal probability: " + prob, 12, 60);
-		
+	text("Timestep " + counter + "\nActual Time: " + counter * timestep + "\nTotal probability: " + prob, 12, 60);
+
 	render();
 }
 
@@ -52,14 +58,43 @@ void timeEvolve()
 {
 	//Create a temporary array to store the current states for evolve
 	State[] temp = new State[numIndex];
+	State[] tempsix = new State[numIndex];
+	State[] temp1 = new State[numIndex];
+	State[] temp2 = new State[numIndex];
+	State[] temphalf = new State[numIndex];
 	for(int i=0; i < numIndex; i++)
 	{
 		temp[i]=states[i];
 	}
-
+	tempsix[0] = states[0];
+	temp1[0] = states[0];
+	temp2[0] = states[0];
+	temphalf[0] = states[0];
+	tempsix[numIndex-1] = states[numIndex-1];
+	temp1[numIndex-1] = states[numIndex-1];
+	temp2[numIndex-1] = states[numIndex-1];
+	temphalf[numIndex-1] = states[numIndex-1];
 	for(int i=1; i < numIndex-1; i++)
 	{
-		states[i]=temp[i].evolve(temp[i-1],temp[i+1]);
+		tempsix[i]=temp[i].evolve(temp[i-1],temp[i+1],(double)1/(double)6);
+	}
+	for(int i=1; i < numIndex-1; i++)
+	{
+		temp1[i]=states[i].evolve(tempsix[i-1],tempsix[i+1],(double)1/(double)3);
+	}
+	for(int i=1; i < numIndex-1; i++)
+	{
+		temp2[i]=states[i].evolve(temp1[i-1],temp1[i+1],(double)2/(double)3);
+	}
+	for(int i=1; i < numIndex-1; i++)
+	{
+		double halfA = ((double)1/(double)2) * (temp1[i].getA() + temp2[i].getA());
+		double halfB = ((double)1/(double)2) * (temp1[i].getB() + temp2[i].getB());
+		temphalf[i] = new State(halfA,halfB);
+	}
+	for(int i=1; i < numIndex-1; i++)
+	{
+		states[i]=states[i].evolve(temphalf[i-1],temphalf[i+1],(double)1);
 	}
 }
 
@@ -84,7 +119,7 @@ float findDisplayY(double y)
 void render()
 {
 	noStroke();
-	
+
 	for(int i=0; i < numIndex; i++)
 	{
 		//Access the x and y coordinates of each state
@@ -117,21 +152,20 @@ class State
 	//Approximate a time derivate of this state in the lattice
 	State timeDerivative(State left, State right)
 	{
-		double newB = right.getA() + left.getA() - 2*this.a;
-		double newA = 2*this.b - right.getB() - left.getB();
-
+		double newB = right.getA() + left.getA() - (double)2*this.a;
+		double newA = (double)2*this.b - right.getB() - left.getB();
 		return new State(newA,newB);
 	}
 
 	//Use the timeDerivative() function to evolve forward in time by one time step
-	State evolve(State left, State right)
+	State evolve(State left, State right, double frac)
 	{
 		State dt = timeDerivative(left,right);
-		double tempA = this.a + timestep * dt.getA();
-		double tempB = this.b + timestep * dt.getB();
+		double tempA = this.a + frac * timestep * dt.getA();
+		double tempB = this.b + frac * timestep * dt.getB();
 		return new State(tempA, tempB);
 	}
-	
+
 	//get-setters
 	double getA()
 	{
