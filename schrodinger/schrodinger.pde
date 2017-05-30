@@ -1,8 +1,7 @@
-int numIndex=500;
-double interval=0.5;
+int numIndex=1000;
+double interval=1;
 double timestep=0.05;
 double latSpace;
-double dx;
 State[] states = new State[numIndex];
 int counter;
 
@@ -10,7 +9,6 @@ void setup()
 {
 	size(2000, 1500);
 	latSpace = (double) width / (double) numIndex;
-	dx = (double) interval / (double) numIndex;
 	for(int i=0; i < numIndex; i++)
 	{
 		double x = findCoordinate(i);
