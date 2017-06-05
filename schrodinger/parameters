@@ -1,0 +1,15 @@
+n=3 Energy Eigenstate
+
+numIndex=150
+scale=50
+interval=0.05
+timestep=0.01
+
+Wave Packet
+
+a1=0.01
+numIndex=500
+scale=50
+interval=0.5
+timestep=0.05
+denominator=0.005

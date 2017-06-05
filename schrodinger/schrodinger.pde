@@ -1,6 +1,7 @@
-int numIndex=1000;
-double interval=1;
-double timestep=0.05;
+int numIndex=250;
+int scale=50;
+double interval=0.5;
+double timestep=0.025;
 double latSpace;
 State[] states = new State[numIndex];
 int counter;
@@ -15,8 +16,16 @@ void setup()
 		double a1 = 0.01;
 		double totalAmplitude = (double) 1 / Math.sqrt(Math.sqrt(Math.PI) * a1) * Math.exp(0 - Math.pow(x,2) / (2 * Math.pow(a1,2)));
 
-		double a = totalAmplitude * Math.cos((x-1000)*1000);
-		double b = totalAmplitude * Math.sin((x-1000)*1000);
+		int n = 3;
+		double k = (double) n * Math.PI / interval;
+
+		/*
+		double a = Math.sqrt(2 / interval) * Math.cos(k * x);
+		double b = 0;
+		*/
+
+		double a = totalAmplitude * Math.cos(2*Math.PI*x / 0.005);
+		double b = totalAmplitude * Math.sin(2*Math.PI*x / 0.005);
 
 		/*
 		double a = totalAmplitude * 1;
@@ -94,6 +103,10 @@ void timeEvolve()
 	{
 		states[i]=states[i].evolve(temphalf[i-1],temphalf[i+1],(double)1);
 	}
+	/*
+	temp[100].timeDerivativeTest(temp[99],temp[101]);
+	println("Initial: " + temp[100] + "\n");
+	*/
 }
 
 //Find the actual x-coordinate of an index i
@@ -110,7 +123,7 @@ float findDisplayX(int index)
 
 float findDisplayY(double y)
 {
-	return (float)(height/2) - 20*(float)y;
+	return (float)(height/2) - scale*(float)y;
 }
 
 //Render the array of states
@@ -120,18 +133,19 @@ void render()
 
 	for(int i=0; i < numIndex; i++)
 	{
+		int size=8;
 		//Access the x and y coordinates of each state
 		double x = findCoordinate(i);
 		double y = states[i].getA();
 		double yb = states[i].getB();
 		//Draw an ellipse at each x and y coordinate
 		fill(255,0,0);
-		ellipse(findDisplayX(i), findDisplayY(y), 8, 8);
+		ellipse(findDisplayX(i), findDisplayY(y), size, size);
 		fill(0,255,0);
-		ellipse(findDisplayX(i), findDisplayY(yb), 8, 8);
-		double overall = Math.pow(y,2) + Math.pow(yb,2);
+		ellipse(findDisplayX(i), findDisplayY(yb), size, size);
+		double overall = Math.sqrt(Math.pow(y,2) + Math.pow(yb,2));
 		fill(0,0,255);
-		ellipse(findDisplayX(i), findDisplayY(overall), 8, 8);
+		ellipse(findDisplayX(i), findDisplayY(overall), size, size);
 	}
 }
 
@@ -145,6 +159,16 @@ class State
 	{
 		this.a = a;
 		this.b = b;
+	}
+
+	State timeDerivativeTest(State left, State right)
+	{
+		double newB = right.getA() + left.getA() - (double)2*this.a;
+		double newA = (double)2*this.b - right.getB() - left.getB();
+		println("Right A: " + right.getA() + ", Left A: " + left.getA() + ", This A: " + this.a);
+		println("Right B: " + right.getB() + ", Left B: " + left.getB() + ", This B: " + this.b);
+		println("New A: " + newA + ", New B: " + newB);
+		return new State(newA,newB);
 	}
 
 	//Approximate a time derivate of this state in the lattice

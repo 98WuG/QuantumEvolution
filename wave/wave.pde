@@ -1,6 +1,7 @@
 int numIndex=1000;
-double interval=2*Math.PI;
-double timestep=0.05;
+double interval=10;
+double timestep=0.025;
+float scale=5;
 double latSpace;
 Phi[] phis = new Phi[numIndex];
 int counter;
@@ -13,14 +14,11 @@ void setup()
 	{
 		double x = findCoordinate(i);
 
-		double value = Math.sin(x);
-		double prime = Math.cos(x);
+		double value = 100 * Math.cos(3 * Math.PI * x / interval);
+		double dot=0;
 
-		phis[i] = new Phi(value,prime);
-		println(i + ": Value: " + value + ", Prime: " + prime);
+		phis[i] = new Phi(value,dot);
 	}
-	phis[0] = new Phi(0,0);
-	phis[numIndex - 1] = new Phi(0,0);
 	counter = 0;
 	frameRate(1000);
 }
@@ -39,29 +37,32 @@ void draw()
 
 void timeEvolve()
 {
+	//println("oldDot: " + phis[numIndex/2].getDot());
 	/*
 	Phi[] temphalf = new Phi[numIndex];
+	temphalf[0] = phis[0];
+	temphalf[numIndex-1] = phis[numIndex-1];
+	println("spaceDerivative: " + phis[500].spaceDerivative(phis[500-1],phis[500+1]));
 
 	for(int i = 1; i < numIndex - 1; i++)
 	{
-		temphalf[i] = phis[i].evolve(phis[i-1],phis[i+1],(double)1/(double)2);
+		temphalf[i] = phis[i].evolve(phis[i-1],phis[i+1],(double)1/(double)2,i,0);
 	}
-	temphalf[0] = new Phi(0,0);
-	temphalf[numIndex - 1] = new Phi(0,0);
 	for(int i = 1; i < numIndex - 1; i++)
 	{
-		phis[i] = phis[i].evolve(temphalf[i-1],temphalf[i+1],(double)1);
+		phis[i] = phis[i].evolve(temphalf[i-1],temphalf[i+1],(double)1,i,1);
 	}
 	*/
 	Phi[] temp = new Phi[numIndex];
-
-	for(int i = 0; i < numIndex; i++)
+	temp[0] = phis[0];
+	temp[numIndex - 1] = phis[numIndex - 1];
+	for(int i = 1; i < numIndex - 1; i++)
 	{
 		temp[i] = phis[i];
 	}
 	for(int i = 1; i < numIndex - 1; i++)
 	{
-		phis[i] = temp[i].evolve(temp[i-1],temp[i+1],(double)1);
+		phis[i] = temp[i].evolve(temp[i-1],temp[i+1], (double)1,i,1);
 	}
 }
 
@@ -78,7 +79,12 @@ float findDisplayX(int index)
 
 float findDisplayY(double y)
 {
-	return (float)(height / 2) - 20 * (float) y;
+	return (float)(height / 2) - scale * (float) y;
+}
+
+float findDisplayYTest(double y)
+{
+	return (float)(height / 2) - scale * (float) y * 100;
 }
 
 void render()
@@ -90,38 +96,47 @@ void render()
 		//Access the x and y coordinates of the each state
 		double x = findCoordinate(i);
 		double y = phis[i].getValue();
-		double prime = phis[i].getPrime();
+		double dot = phis[i].getDot();
 
 		fill(255,0,0);
 		ellipse(findDisplayX(i), findDisplayY(y), 8, 8);
 		fill(0,255,0);
-		ellipse(findDisplayX(i), findDisplayY(prime), 8, 8);
+		ellipse(findDisplayX(i), findDisplayY(dot), 8, 8);
 	}
+	for(int i = 1; i < numIndex - 1; i++)
+	{
+		fill(0,0,255);
+		ellipse(findDisplayX(i), findDisplayYTest(phis[i].spaceDerivative(phis[i-1],phis[i+1])), 8, 8);
+	}
+	//println("newDot: " + phis[numIndex/2].getDot() + ", phiDoubleX" + phis[numIndex/2].spaceDerivative(phis[numIndex/2 - 1], phis[numIndex/2 + 1]));
 }
 
 class Phi
 {
 	double value;
-	double prime;
+	double dot;
 
-	Phi(double value, double prime)
+	Phi(double value, double dot)
 	{
 		this.value = value;
-		this.prime = prime;
+		this.dot = dot;
 	}
 
 	double spaceDerivative(Phi left, Phi right)
 	{
-		double temp = 2 * this.value - right.getValue() - left.getValue();
+		double temp = right.getValue() + left.getValue() - 2 * this.value;
 		return temp;
+		//return phis[index+1] + phis[index-1] - 2 * phis[index];
 	}
 
-	Phi evolve(Phi left, Phi right, double frac)
+	Phi evolve(Phi left, Phi right, double frac, int index, int status)
 	{
 		double phiDoubleX = spaceDerivative(left,right);
-		double newValue = this.value + frac * timestep * this.prime;
-		double newPrime = this.prime + frac * timestep * phiDoubleX;
-		return new Phi(newValue,newPrime);
+		double newValue = this.value + frac * timestep * this.dot;
+		double newDot = this.dot + frac * timestep * phiDoubleX;
+		if(index == 500 && status == 1)
+			println("new: " + newDot + "old: " + this.dot + "phiDouble: " + phiDoubleX, "left: " + left.getValue(), "right: " + right.getValue() + "this: " + this.value);
+		return new Phi(newValue,newDot);
 	}
 
 	//get-setters
@@ -129,21 +144,21 @@ class Phi
 	{
 		return value;
 	}
-	double getPrime()
+	double getDot()
 	{
-		return prime;
+		return dot;
 	}
 	void setValue(double value)
 	{
 		this.value = value;
 	}
-	void setPrime(double prime)
+	void setDot(double dot)
 	{
-		this.prime = prime;
+		this.dot = dot;
 	}
 
 	String toString()
 	{
-		return "" + value + "," + prime;
+		return "" + value + "," + dot;
 	}
 }
