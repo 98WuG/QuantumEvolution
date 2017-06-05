@@ -1,6 +1,6 @@
 int numIndex=1000;
 double interval=10;
-double timestep=0.025;
+double timestep=0.01;
 float scale=5;
 double latSpace;
 Phi[] phis = new Phi[numIndex];
