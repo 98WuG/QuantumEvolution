@@ -8,6 +8,7 @@ int counter;
 
 void setup()
 {
+	Apfloat z = new Apfloat(2, 1000);
 	size(2000, 1500);
 	latSpace = (double) width / (double) numIndex;
 	for(int i=0; i < numIndex; i++)
