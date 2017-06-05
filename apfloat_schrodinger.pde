@@ -1,7 +1,8 @@
-int numIndex=500;
+int prec=32;
+int numIndex=250;
 int scale=50;
 double interval=0.5;
-double timestep=0.05;
+double timestep=0.025;
 double latSpace;
 State[] states = new State[numIndex];
 int counter;
@@ -12,9 +13,9 @@ void setup()
 	latSpace = (double) width / (double) numIndex;
 	for(int i=0; i < numIndex; i++)
 	{
-		double x = findCoordinate(i);
-		double a1 = 0.01;
-		double totalAmplitude = (double) 1 / Math.sqrt(Math.sqrt(Math.PI) * a1) * Math.exp(0 - Math.pow(x,2) / (2 * Math.pow(a1,2)));
+		Apfloat a1 = new Apfloat(0.01, prec);
+		Apfloat x = new Apfloat(findCoordinate(i), prec);
+		Apfloat totalAmplitude = (new Apfloat(1)).divide(ApfloatMath.sqrt(ApfloatMath.sqrt(ApfloatMath.pi(prec)).multiply(aa1))).multiply(ApfloatMath.exp((ApfloatMath.pow(ax,2).divide((new Apfloat(2)).multiply(ApfloatMath.pow(aa1,2)))).negate())); // 1/sqrt(sqrt(pi)*a) * e^(-x^2/(2a^2))
 
 		int n = 3;
 		double k = (double) n * Math.PI / interval;
@@ -24,9 +25,8 @@ void setup()
 		double b = 0;
 		*/
 
-		double a = totalAmplitude * Math.cos(2*Math.PI*x / 0.005);
-		double b = totalAmplitude * Math.sin(2*Math.PI*x / 0.005);
-
+		Apfloat a = atotalAmplitude.multiply(ApfloatMath.cos((new Apfloat(2)).multiply(ApfloatMath.pi(prec)).multiply(ax).divide(new Apfloat(0.005,prec)));
+		Apfloat b = atotalAmplitude.multiply(ApfloatMath.sin((new Apfloat(2)).multiply(ApfloatMath.pi(prec)).multiply(ax).divide(new Apfloat(0.005,prec)));
 
 		/*
 		double a = totalAmplitude * 1;
@@ -43,9 +43,14 @@ void draw()
 {
 	background(0);
 	double prob=0;
+	Apfloat aprob = new Apfloat(0);
 	for(State current : states)
 	{
 		prob += Math.pow(current.getA(),2) + Math.pow(current.getB(),2);
+	}
+	for(State acurrent : astates)
+	{
+		aprob += ApfloatMath.pow(current.getA(),2).add(ApfloatMath.pow(current.getB(),2);
 	}
 	prob = prob / (double) numIndex * (double) interval;
 	for(State current : states)
@@ -144,7 +149,7 @@ void render()
 		ellipse(findDisplayX(i), findDisplayY(y), size, size);
 		fill(0,255,0);
 		ellipse(findDisplayX(i), findDisplayY(yb), size, size);
-		double overall = Math.pow(y,2) + Math.pow(yb,2);
+		double overall = Math.sqrt(Math.pow(y,2) + Math.pow(yb,2));
 		fill(0,0,255);
 		ellipse(findDisplayX(i), findDisplayY(overall), size, size);
 	}
@@ -153,10 +158,10 @@ void render()
 
 class State
 {
-	double a;
-	double b;
+	Apfloat a;
+	Apfloat b;
 
-	State(double a, double b)
+	State(Apfloat a, Apfloat b)
 	{
 		this.a = a;
 		this.b = b;
@@ -164,8 +169,8 @@ class State
 
 	State timeDerivativeTest(State left, State right)
 	{
-		double newB = right.getA() + left.getA() - (double)2*this.a;
-		double newA = (double)2*this.b - right.getB() - left.getB();
+		Apfloat newB = right.getA().add(left.getA()).subtract((new Apfloat(2)).multiply(this.a));
+		Apfloat newA = ((new Apfloat(2)).multiply(this.b)).subtract(right.getB()).subtract(left.getB());
 		println("Right A: " + right.getA() + ", Left A: " + left.getA() + ", This A: " + this.a);
 		println("Right B: " + right.getB() + ", Left B: " + left.getB() + ", This B: " + this.b);
 		println("New A: " + newA + ", New B: " + newB);
@@ -175,34 +180,34 @@ class State
 	//Approximate a time derivate of this state in the lattice
 	State timeDerivative(State left, State right)
 	{
-		double newB = right.getA() + left.getA() - (double)2*this.a;
-		double newA = (double)2*this.b - right.getB() - left.getB();
+		Apfloat newB = right.getA().add(left.getA()).subtract((new Apfloat(2)).multiply(this.a));
+		Apfloat newA = ((new Apfloat(2)).multiply(this.b)).subtract(right.getB()).subtract(left.getB());
 		return new State(newA,newB);
 	}
 
 	//Use the timeDerivative() function to evolve forward in time by one time step
-	State evolve(State left, State right, double frac)
+	State evolve(State left, State right, Apfloat frac)
 	{
 		State dt = timeDerivative(left,right);
-		double tempA = this.a + frac * timestep * dt.getA();
-		double tempB = this.b + frac * timestep * dt.getB();
+		Apfloat tempA = (this.a).add(frac.multiply(timestep).multiply(dt.getA()));
+		Bpfloat tempB = (this.b).add(frac.multiply(timestep).multiply(dt.getB()));
 		return new State(tempA, tempB);
 	}
 
 	//get-setters
-	double getA()
+	Apfloat getA()
 	{
 		return a;
 	}
-	double getB()
+	Apfloat getB()
 	{
 		return b;
 	}
-	void setA(double a)
+	void setA(Apfloat a)
 	{
 		this.a = a;
 	}
-	void setB(double b)
+	void setB(Apfloat b)
 	{
 		this.b = b;
 	}
