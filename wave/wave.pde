@@ -1,7 +1,7 @@
-int numIndex=1000;
-double interval=10;
-double timestep=0.01;
-float scale=5;
+int numIndex=250;
+double interval=7;
+double timestep=0.025;
+float scale=2.5;
 double latSpace;
 Phi[] phis = new Phi[numIndex];
 int counter;
@@ -14,8 +14,17 @@ void setup()
 	{
 		double x = findCoordinate(i);
 
+		/*
 		double value = 100 * Math.cos(3 * Math.PI * x / interval);
 		double dot=0;
+		*/
+
+		double a1 = 0.1;
+		double c = 300000000;
+		double x0 = 1;
+
+		double value = Math.exp(0 - (Math.pow(x-x0,2) / (2 * a1)));
+		double dot =  (x-x0) / Math.pow(a1,2) * Math.exp(0 - (Math.pow(x-x0,2) / (2 * a1)));
 
 		phis[i] = new Phi(value,dot);
 	}
@@ -100,14 +109,18 @@ void render()
 
 		fill(255,0,0);
 		ellipse(findDisplayX(i), findDisplayY(y), 8, 8);
+		/*
 		fill(0,255,0);
 		ellipse(findDisplayX(i), findDisplayY(dot), 8, 8);
+		*/
 	}
+	/*
 	for(int i = 1; i < numIndex - 1; i++)
 	{
 		fill(0,0,255);
 		ellipse(findDisplayX(i), findDisplayYTest(phis[i].spaceDerivative(phis[i-1],phis[i+1])), 8, 8);
 	}
+	*/
 	//println("newDot: " + phis[numIndex/2].getDot() + ", phiDoubleX" + phis[numIndex/2].spaceDerivative(phis[numIndex/2 - 1], phis[numIndex/2 + 1]));
 }
 
