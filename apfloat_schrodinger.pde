@@ -1,7 +1,8 @@
-int numIndex=500;
-int scale=20;
-double interval=0.5;
-double timestep=0.05;
+int prec=64;
+int numIndex=150;
+int scale=50;
+Apfloat interval = new Apfloat(0.05,prec);
+Apfloat timestep = new Apfloat(0.01,prec);
 double latSpace;
 State[] states = new State[numIndex];
 int counter;
@@ -12,21 +13,30 @@ void setup()
 	latSpace = (double) width / (double) numIndex;
 	for(int i=0; i < numIndex; i++)
 	{
-		double x = findCoordinate(i);
-		double a1 = 0.01;
-		double totalAmplitude = (double) 1 / Math.sqrt(Math.sqrt(Math.PI) * a1) * Math.exp(0 - Math.pow(x,2) / (2 * Math.pow(a1,2)));
+		Apfloat a1 = new Apfloat(0.01, prec);
+		Apfloat x = new Apfloat(findCoordinate(i), prec);
+		Apfloat totalAmplitude = (new Apfloat(1)).divide(ApfloatMath.sqrt(ApfloatMath.sqrt(ApfloatMath.pi(prec)).multiply(a1))).multiply(ApfloatMath.exp((ApfloatMath.pow(x,2).divide((new Apfloat(2)).multiply(ApfloatMath.pow(a1,2)))).negate())); // 1/sqrt(sqrt(pi)*a) * e^(-x^2/(2a^2))
 
+		/*
 		int n = 3;
 		double k = (double) n * Math.PI / interval;
+		*/
 
 		/*
 		double a = Math.sqrt(2 / interval) * Math.cos(k * x);
 		double b = 0;
 		*/
 
-		double a = totalAmplitude * Math.cos(2*Math.PI*x / 0.005);
-		double b = totalAmplitude * Math.sin(2*Math.PI*x / 0.005);
+		int n = 3;
+		Apfloat k = ApfloatMath.pi(prec).divide(interval).multiply(new Apfloat(n,prec));
 
+		Apfloat a = ApfloatMath.sqrt((new Apfloat(2,prec)).divide(interval)).multiply(ApfloatMath.cos(k.multiply(x)));
+		Apfloat b = new Apfloat(0,prec);
+
+		/*
+		Apfloat a = totalAmplitude.multiply(ApfloatMath.cos((new Apfloat(2)).multiply(ApfloatMath.pi(prec)).multiply(x).divide(new Apfloat(0.005,prec))));
+		Apfloat b = totalAmplitude.multiply(ApfloatMath.sin((new Apfloat(2)).multiply(ApfloatMath.pi(prec)).multiply(x).divide(new Apfloat(0.005,prec))));
+		*/
 
 		/*
 		double a = totalAmplitude * 1;
@@ -42,22 +52,22 @@ void setup()
 void draw()
 {
 	background(0);
-	double prob=0;
+	Apfloat prob = new Apfloat(0);
 	for(State current : states)
 	{
-		prob += Math.pow(current.getA(),2) + Math.pow(current.getB(),2);
+		prob = prob.add(ApfloatMath.pow(current.getA(),2).add(ApfloatMath.pow(current.getB(),2)));
 	}
-	prob = prob / (double) numIndex * (double) interval;
+	prob = prob.divide(new Apfloat(numIndex)).multiply(interval);
 	for(State current : states)
 	{
-		current.setA(current.getA() / Math.sqrt(prob));
-		current.setB(current.getB() / Math.sqrt(prob));
+		current.setA(current.getA().divide(ApfloatMath.sqrt(prob)));
+		current.setB(current.getB().divide(ApfloatMath.sqrt(prob)));
 	}
 	timeEvolve();
 	counter++;
 	textSize(30);
 	fill(255);
-	text("Timestep " + counter + "\nActual Time: " + counter * timestep + "\nTotal probability: " + prob, 12, 60);
+	text("Timestep " + counter + "\nActual Time: " + counter * timestep.doubleValue() + "\nTotal probability: " + prob, 12, 60);
 
 	render();
 }
@@ -84,25 +94,25 @@ void timeEvolve()
 	temphalf[numIndex-1] = states[numIndex-1];
 	for(int i=1; i < numIndex-1; i++)
 	{
-		tempsix[i]=temp[i].evolve(temp[i-1],temp[i+1],(double)1/(double)6);
+		tempsix[i]=temp[i].evolve(temp[i-1],temp[i+1],(new Apfloat(1)).divide(new Apfloat(6,prec)));
 	}
 	for(int i=1; i < numIndex-1; i++)
 	{
-		temp1[i]=states[i].evolve(tempsix[i-1],tempsix[i+1],(double)1/(double)3);
+		temp1[i]=states[i].evolve(tempsix[i-1],tempsix[i+1],(new Apfloat(1)).divide(new Apfloat(3,prec)));
 	}
 	for(int i=1; i < numIndex-1; i++)
 	{
-		temp2[i]=states[i].evolve(temp1[i-1],temp1[i+1],(double)2/(double)3);
+		temp2[i]=states[i].evolve(temp1[i-1],temp1[i+1],(new Apfloat(2)).divide(new Apfloat(3,prec)));
 	}
 	for(int i=1; i < numIndex-1; i++)
 	{
-		double halfA = ((double)1/(double)2) * (temp1[i].getA() + temp2[i].getA());
-		double halfB = ((double)1/(double)2) * (temp1[i].getB() + temp2[i].getB());
+		Apfloat halfA = (new Apfloat(1)).divide(new Apfloat(2)).multiply(temp1[i].getA().add(temp2[i].getA()));
+		Apfloat halfB = (new Apfloat(1)).divide(new Apfloat(2)).multiply(temp1[i].getB().add(temp2[i].getB()));
 		temphalf[i] = new State(halfA,halfB);
 	}
 	for(int i=1; i < numIndex-1; i++)
 	{
-		states[i]=states[i].evolve(temphalf[i-1],temphalf[i+1],(double)1);
+		states[i]=states[i].evolve(temphalf[i-1],temphalf[i+1],new Apfloat(1,prec));
 	}
 	/*
 	temp[100].timeDerivativeTest(temp[99],temp[101]);
@@ -114,7 +124,7 @@ void timeEvolve()
 double findCoordinate(int i)
 {
 	i = i - numIndex/2;
-	return (double) i * (double) interval / (double) numIndex;
+	return i * interval.doubleValue() / (double) numIndex;
 }
 
 float findDisplayX(int index)
@@ -137,14 +147,14 @@ void render()
 		int size=8;
 		//Access the x and y coordinates of each state
 		double x = findCoordinate(i);
-		double y = states[i].getA();
-		double yb = states[i].getB();
+		double ya = states[i].getA().doubleValue();
+		double yb = states[i].getB().doubleValue();
 		//Draw an ellipse at each x and y coordinate
 		fill(255,0,0);
-		ellipse(findDisplayX(i), findDisplayY(y), size, size);
+		ellipse(findDisplayX(i), findDisplayY(ya), size, size);
 		fill(0,255,0);
 		ellipse(findDisplayX(i), findDisplayY(yb), size, size);
-		double overall = Math.pow(y,2) + Math.pow(yb,2);
+		double overall = Math.sqrt(Math.pow(ya,2) + Math.pow(yb,2));
 		fill(0,0,255);
 		ellipse(findDisplayX(i), findDisplayY(overall), size, size);
 	}
@@ -153,10 +163,10 @@ void render()
 
 class State
 {
-	double a;
-	double b;
+	Apfloat a;
+	Apfloat b;
 
-	State(double a, double b)
+	State(Apfloat a, Apfloat b)
 	{
 		this.a = a;
 		this.b = b;
@@ -164,8 +174,8 @@ class State
 
 	State timeDerivativeTest(State left, State right)
 	{
-		double newB = right.getA() + left.getA() - (double)2*this.a;
-		double newA = (double)2*this.b - right.getB() - left.getB();
+		Apfloat newB = right.getA().add(left.getA()).subtract((new Apfloat(2)).multiply(this.a));
+		Apfloat newA = ((new Apfloat(2)).multiply(this.b)).subtract(right.getB()).subtract(left.getB());
 		println("Right A: " + right.getA() + ", Left A: " + left.getA() + ", This A: " + this.a);
 		println("Right B: " + right.getB() + ", Left B: " + left.getB() + ", This B: " + this.b);
 		println("New A: " + newA + ", New B: " + newB);
@@ -175,34 +185,34 @@ class State
 	//Approximate a time derivate of this state in the lattice
 	State timeDerivative(State left, State right)
 	{
-		double newB = right.getA() + left.getA() - (double)2*this.a;
-		double newA = (double)2*this.b - right.getB() - left.getB();
+		Apfloat newB = right.getA().add(left.getA()).subtract((new Apfloat(2)).multiply(this.a));
+		Apfloat newA = ((new Apfloat(2)).multiply(this.b)).subtract(right.getB()).subtract(left.getB());
 		return new State(newA,newB);
 	}
 
 	//Use the timeDerivative() function to evolve forward in time by one time step
-	State evolve(State left, State right, double frac)
+	State evolve(State left, State right, Apfloat frac)
 	{
 		State dt = timeDerivative(left,right);
-		double tempA = this.a + frac * timestep * dt.getA();
-		double tempB = this.b + frac * timestep * dt.getB();
+		Apfloat tempA = (this.a).add(frac.multiply(timestep).multiply(dt.getA()));
+		Apfloat tempB = (this.b).add(frac.multiply(timestep).multiply(dt.getB()));
 		return new State(tempA, tempB);
 	}
 
 	//get-setters
-	double getA()
+	Apfloat getA()
 	{
 		return a;
 	}
-	double getB()
+	Apfloat getB()
 	{
 		return b;
 	}
-	void setA(double a)
+	void setA(Apfloat a)
 	{
 		this.a = a;
 	}
-	void setB(double b)
+	void setB(Apfloat b)
 	{
 		this.b = b;
 	}

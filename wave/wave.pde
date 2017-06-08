@@ -1,7 +1,7 @@
 int numIndex=250;
-double interval=7;
-double timestep=0.025;
-float scale=2.5;
+double interval=15;
+double timestep=0.001;
+float scale=25;
 double latSpace;
 Phi[] phis = new Phi[numIndex];
 int counter;
@@ -15,28 +15,31 @@ void setup()
 		double x = findCoordinate(i);
 
 		/*
-		double value = 100 * Math.cos(3 * Math.PI * x / interval);
+		double value = 10 * Math.cos(3 * Math.PI * x / interval);
 		double dot=0;
 		*/
 
-		double a1 = 0.1;
+		double a1 = 0.8;
 		double c = 300000000;
-		double x0 = 1;
+		double x0 = 0;
 
-		double value = Math.exp(0 - (Math.pow(x-x0,2) / (2 * a1)));
-		double dot =  (x-x0) / Math.pow(a1,2) * Math.exp(0 - (Math.pow(x-x0,2) / (2 * a1)));
+		double value = Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(a1,2))));
+		double dot =  (x-x0) / Math.pow(a1,2) * Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(a1,2))));
 
 		phis[i] = new Phi(value,dot);
 	}
 	counter = 0;
-	frameRate(1000);
+	frameRate(100000);
 }
 
 void draw()
 {
 	background(0);
-	timeEvolve();
-	counter++;
+	for(int i = 0 ; i < 750 ; i++)
+	{
+		timeEvolve();
+		counter++;
+	}
 	textSize(30);
 	fill(255);
 	text("Timestep " + counter + "\nActual Time: " + counter * timestep, 12, 60);
@@ -109,10 +112,8 @@ void render()
 
 		fill(255,0,0);
 		ellipse(findDisplayX(i), findDisplayY(y), 8, 8);
-		/*
 		fill(0,255,0);
 		ellipse(findDisplayX(i), findDisplayY(dot), 8, 8);
-		*/
 	}
 	/*
 	for(int i = 1; i < numIndex - 1; i++)
