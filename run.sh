@@ -11,6 +11,12 @@ function ctrl_c() {
 }
 function run {
 	cd "$1"
+	if ! [ -f "$2" ]
+	then
+		echo -e "$2 not found!\nAborting..."
+		echo -e "$usage"
+		exit 2
+	fi
 	cp "$2" "$1.pde"
 	trap ctrl_c INT
 	make

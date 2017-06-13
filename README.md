@@ -16,6 +16,6 @@ Options:
 
 For example, if I want to see the gaussian wave packet for the Schrodinger equation, I'd run ```./run.sh -p schrodinger -i gaussian```.
 
-If this bash script doesn't work, fallback to the ```compat_run.sh``` script.
+If the ```run.sh``` script doesn't work, fallback to the ```compat_run.sh``` script. Run this with ```./compat_run.sh```.
 
 This script will prompt you each time for what you'd like to run. This is less efficient but is POSIX compliant.
