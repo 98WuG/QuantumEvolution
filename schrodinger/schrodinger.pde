@@ -1,15 +1,15 @@
 // Eigenstate
-/*
 int numIndex=100;
 int scale=35;
 double interval=0.05;
 double timestep=0.0005;
-*/
 // Moving
+/*
 int numIndex=450;
 int scale=50;
 double interval=0.5;
 double timestep=0.0025;
+*/
 
 double latSpace;
 State[] states = new State[numIndex];
@@ -28,19 +28,14 @@ void setup()
 		int n = 3;
 		double k = (double) n * Math.PI / interval;
 
-		/*
 		double a = Math.sqrt(2 / interval) * Math.cos(k * x);
 		double b = 0;
-		*/
-
-		double a = totalAmplitude * Math.cos(2*Math.PI*x / 0.005);
-		double b = totalAmplitude * Math.sin(2*Math.PI*x / 0.005);
-
 
 		/*
-		double a = totalAmplitude * 1;
-		double b = totalAmplitude * 0;
+		double a = totalAmplitude * Math.cos(2*Math.PI*x / 0.005);
+		double b = totalAmplitude * Math.sin(2*Math.PI*x / 0.005);
 		*/
+
 
 		states[i] = new State(a,b);
 	}
@@ -62,7 +57,7 @@ void draw()
 		current.setA(current.getA() / Math.sqrt(prob));
 		current.setB(current.getB() / Math.sqrt(prob));
 	}
-	for(int i = 0; i < 1000; i++)
+	for(int i = 0; i < 3000; i++)
 	{
 		timeEvolve();
 		counter++;

@@ -1,7 +1,8 @@
 int numIndex=250;
 double interval=15;
 double timestep=0.001;
-float scale=25;
+float scale=250;
+//float scale=25;
 double latSpace;
 Phi[] phis = new Phi[numIndex];
 int counter;
@@ -19,23 +20,23 @@ void setup()
 		double dot=0;
 		*/
 
-		double a1 = 0.8;
-		double c = 300000000;
+		double deltax = 1;
+		double c = 0.06;
 		double x0 = 0;
 
-		double value = Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(a1,2))));
-		double dot =  (x-x0) / Math.pow(a1,2) * Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(a1,2))));
+		double value = Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(deltax,2))));
+		double dot = c * (x-x0) / Math.pow(deltax,2) * Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(deltax,2))));
 
 		phis[i] = new Phi(value,dot);
 	}
 	counter = 0;
-	frameRate(100000);
+	frameRate(10000);
 }
 
 void draw()
 {
 	background(0);
-	for(int i = 0 ; i < 750 ; i++)
+	for(int i = 0 ; i < 1000 ; i++)
 	{
 		timeEvolve();
 		counter++;
