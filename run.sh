@@ -1,12 +1,11 @@
-#!/bin/bash
+#!/bin/bash --posix
 
 
 function ctrl_c() {
 	echo "Detected user abort! Cleaning up files..."
 	if [ -f "$program.pde" ]
 	then
-		rm "$program.pde"
-		echo "Removed $program/$program.pde"
+		rm -v "$program.pde"
 	fi
 	exit 10
 }
