@@ -41,8 +41,9 @@ fi
 # use eval with "$PARSED" to properly handle the quoting
 eval set -- "$PARSED"
 
-usage="Usage:
-$(basename "$0") [-h] [-p progname] [-i initstate] -- program to numerically compute evolutions of initial states to the schrodinger equation and wave equation
+usage="
+Usage:
+    $(basename "$0") [-h] [-p progname] [-i initstate] -- program to numerically compute evolutions of initial states to the schrodinger equation and wave equation
 
 Options:
     -h, --help                show this help text
@@ -76,12 +77,12 @@ while true; do
 done
 
 if [ -z $program ]; then
-	echo -e "Missing required flag: -p <progname>\n"
+	echo -e "\nMissing required flag: -p <progname>"
 	echo "$usage"
 	exit 4
 fi
 if [ -z $initial ]; then
-	echo -e "Missing required flag: -i <initstate>\n"
+	echo -e "\nMissing required flag: -i <initstate>"
 	echo "$usage"
 	exit 5
 fi
