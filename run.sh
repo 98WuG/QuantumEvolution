@@ -52,10 +52,10 @@ Options:
 # now enjoy the options in order and nicely split until we see --
 while true; do
     case "$1" in
-		-h|--help)
-			echo "$usage"
-			exit
-			;;
+        -h|--help)
+            echo "$usage"
+            exit
+            ;;
         -p|--program)
             program="$4"
             shift
