@@ -1,16 +1,24 @@
 #!/bin/bash
 
 
+function ctrl_c() {
+	echo "Detected user abort! Cleaning up files..."
+	if [ -f "$program.pde" ]
+	then
+		rm "$program.pde"
+		echo "Removed $program/$program.pde"
+	fi
+	exit 10
+}
 function run {
 	cd "$1"
 	cp "$2" "$1.pde"
+	trap ctrl_c INT
 	make
 	rm "$1.pde"
 	cd ..
 	echo "Program finished, cleaning up"
 }
-
-#!/bin/bash
 
 getopt --test > /dev/null
 if [[ $? -ne 4 ]]; then
