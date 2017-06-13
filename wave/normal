@@ -1,8 +1,8 @@
 int numIndex=250;
 double interval=15;
 double timestep=0.001;
-float scale=250;
-//float scale=25;
+//float scale=250;
+float scale=25;
 double latSpace;
 Phi[] phis = new Phi[numIndex];
 int counter;
@@ -15,17 +15,17 @@ void setup()
 	{
 		double x = findCoordinate(i);
 
-		/*
 		double value = 10 * Math.cos(3 * Math.PI * x / interval);
 		double dot=0;
-		*/
 
 		double deltax = 1;
 		double c = 0.06;
 		double x0 = 0;
 
+		/*
 		double value = Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(deltax,2))));
 		double dot = c * (x-x0) / Math.pow(deltax,2) * Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(deltax,2))));
+		*/
 
 		phis[i] = new Phi(value,dot);
 	}
