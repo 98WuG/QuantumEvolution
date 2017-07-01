@@ -1,0 +1,179 @@
+int numIndex=250;
+double interval=15;
+double timestep=0.001;
+float scale=250;
+//float scale=25;
+double latSpace;
+Phi[] phis = new Phi[numIndex];
+int counter;
+
+void setup()
+{
+	size(2000, 1500);
+	latSpace = (double) width / (double) numIndex;
+	for(int i = 0; i < numIndex; i++)
+	{
+		double x = findCoordinate(i);
+
+		/*
+		double value = 10 * Math.cos(3 * Math.PI * x / interval);
+		double dot=0;
+		*/
+
+		double deltax = 1;
+		double c = 0.06;
+		double x0 = 0;
+
+		double value = Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(deltax,2))));
+		double dot = c * (x-x0) / Math.pow(deltax,2) * Math.exp(0 - (Math.pow(x-x0,2) / (2 * Math.pow(deltax,2))));
+
+		phis[i] = new Phi(value,dot);
+	}
+	counter = 0;
+	frameRate(10000);
+}
+
+void draw()
+{
+	background(0);
+	for(int i = 0 ; i < 3000 ; i++)
+	{
+		timeEvolve();
+		counter++;
+	}
+	textSize(30);
+	fill(255);
+	text("Timestep " + counter + "\nActual Time: " + counter * timestep, 12, 60);
+
+	render();
+}
+
+void timeEvolve()
+{
+	//println("oldDot: " + phis[numIndex/2].getDot());
+	/*
+	Phi[] temphalf = new Phi[numIndex];
+	temphalf[0] = phis[0];
+	temphalf[numIndex-1] = phis[numIndex-1];
+	println("spaceDerivative: " + phis[500].spaceDerivative(phis[500-1],phis[500+1]));
+
+	for(int i = 1; i < numIndex - 1; i++)
+	{
+		temphalf[i] = phis[i].evolve(phis[i-1],phis[i+1],(double)1/(double)2,i,0);
+	}
+	for(int i = 1; i < numIndex - 1; i++)
+	{
+		phis[i] = phis[i].evolve(temphalf[i-1],temphalf[i+1],(double)1,i,1);
+	}
+	*/
+	Phi[] temp = new Phi[numIndex];
+	temp[0] = phis[0];
+	temp[numIndex - 1] = phis[numIndex - 1];
+	for(int i = 1; i < numIndex - 1; i++)
+	{
+		temp[i] = phis[i];
+	}
+	for(int i = 1; i < numIndex - 1; i++)
+	{
+		phis[i] = temp[i].evolve(temp[i-1],temp[i+1], (double)1,i,1);
+	}
+}
+
+double findCoordinate(int i)
+{
+	i = i - numIndex / 2;
+	return (double) i * (double) interval / (double) numIndex;
+}
+
+float findDisplayX(int index)
+{
+	return (float) index * (float) latSpace;
+}
+
+float findDisplayY(double y)
+{
+	return (float)(height / 2) - scale * (float) y;
+}
+
+float findDisplayYTest(double y)
+{
+	return (float)(height / 2) - scale * (float) y * 100;
+}
+
+void render()
+{
+	noStroke();
+
+	for(int i = 0; i < numIndex; i++)
+	{
+		//Access the x and y coordinates of the each state
+		double x = findCoordinate(i);
+		double y = phis[i].getValue();
+		double dot = phis[i].getDot();
+
+		fill(255,0,0);
+		ellipse(findDisplayX(i), findDisplayY(y), 8, 8);
+		fill(0,255,0);
+		ellipse(findDisplayX(i), findDisplayY(dot), 8, 8);
+	}
+	/*
+	for(int i = 1; i < numIndex - 1; i++)
+	{
+		fill(0,0,255);
+		ellipse(findDisplayX(i), findDisplayYTest(phis[i].spaceDerivative(phis[i-1],phis[i+1])), 8, 8);
+	}
+	*/
+	//println("newDot: " + phis[numIndex/2].getDot() + ", phiDoubleX" + phis[numIndex/2].spaceDerivative(phis[numIndex/2 - 1], phis[numIndex/2 + 1]));
+}
+
+class Phi
+{
+	double value;
+	double dot;
+
+	Phi(double value, double dot)
+	{
+		this.value = value;
+		this.dot = dot;
+	}
+
+	double spaceDerivative(Phi left, Phi right)
+	{
+		double temp = right.getValue() + left.getValue() - 2 * this.value;
+		return temp;
+		//return phis[index+1] + phis[index-1] - 2 * phis[index];
+	}
+
+	Phi evolve(Phi left, Phi right, double frac, int index, int status)
+	{
+		double phiDoubleX = spaceDerivative(left,right);
+		double newValue = this.value + frac * timestep * this.dot;
+		double newDot = this.dot + frac * timestep * phiDoubleX;
+		if(index == 500 && status == 1)
+			println("new: " + newDot + "old: " + this.dot + "phiDouble: " + phiDoubleX, "left: " + left.getValue(), "right: " + right.getValue() + "this: " + this.value);
+		return new Phi(newValue,newDot);
+	}
+
+	//get-setters
+	double getValue()
+	{
+		return value;
+	}
+	double getDot()
+	{
+		return dot;
+	}
+	void setValue(double value)
+	{
+		this.value = value;
+	}
+	void setDot(double dot)
+	{
+		this.dot = dot;
+	}
+
+	String toString()
+	{
+		return "" + value + "," + dot;
+	}
+}
