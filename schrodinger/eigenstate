@@ -17,7 +17,7 @@ int counter;
 
 void setup()
 {
-	size(2000, 1500);
+	size(1000, 750);
 	latSpace = (double) width / (double) numIndex;
 	for(int i=0; i < numIndex; i++)
 	{
